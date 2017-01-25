@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?define AppSourcePath = ".\..\Example"?>
+
+<?if $(sys.BUILDARCH) = x64 ?>
+<?define Monitor =   "Monitorx64.exe" ?>
+<?else ?>
+<?define Monitor =   "Monitorx86.exe" ?>
+<?endif ?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*" Name="Spooler Monitor"
+    Language="1033" Version="1.0.0.2" Manufacturer="BADASS Ltd"
+    UpgradeCode="644e7e88-033e-a5ca-4b9b-6c598f277dab">
+    <Package InstallerVersion="200" Compressed="yes"
+	 Comments="MSI Tutorial Project" Id="*"/>
+    <Media Id="1" Cabinet="SpoolerMonitor.cab" EmbedCab="yes" />
+    <Icon Id="ProductIcon" SourceFile="$(var.AppSourcePath)\example.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="ProductIcon"/>
+    <Property Id="ARPHELPLINK" Value="http://www.exampleproduct.com"/>
+    <Property Id="ARPURLINFOABOUT" Value="http://www.examplecompany.com"/>
+    <Property Id="ARPNOREPAIR" Value="1"/>
+
+    <Media Id='2' />
+
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+      <Directory Id='ProgramFilesFolder' Name='PFiles'>
+        <Directory Id='MainDir' Name='SplMontior'>
+          <Directory Id='Example2' Name='Files'>
+            <Component Id='MyComponent' Guid='c97d6278-6f6c-4e0a-9bfa-372a6d5ffce0'>
+              <File Id='MSI_Tutorials_ExampleTxt' Name='MonitorSpl.exe' DiskId='1'
+           Source='$(var.AppSourcePath)\WindowsFormsApplication1.exe' />              
+            </Component>
+            <Component Id='MyComponent1' Guid='c97d6278-6f6c-4e0a-9bfa-372a6d5ffce1'>
+            <File Id='MSI_Tutorials_ExampleTxt1' Name='Monitor.exe' DiskId='1'
+         Source='$(var.AppSourcePath)\$(var.Monitor)' />
+            </Component>
+          </Directory>
+        </Directory>
+      </Directory>
+
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ProgramMenuSubfolder" Name="SplMontior">
+          <Component Id="ApplicationShortcuts" Guid="12345678-1234-1234-1234-333333333333">
+            <Shortcut Id="ApplicationShortcut1" Name="MonitorSpl" Description="Spooler Monitor"
+                      Target="[Example2]MonitorSpl.exe" WorkingDirectory="Example2" Icon="ProductIcon" IconIndex="0" />
+            <RegistryValue Root="HKCU" Key="Software\[Manufacturer]\[ProductName]"
+                      Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+            <RemoveFolder Id="ProgramMenuSubfolder" On="uninstall"/>
+          </Component>
+        </Directory>
+      </Directory>
+    </Directory>
+    
+    
+    <Feature Id='MyFeature' Title='My 1st Feature' Level='1'>
+      <ComponentRef Id='MyComponent' />
+      <ComponentRef Id='MyComponent1' />
+      <ComponentRef Id="ApplicationShortcuts"/>      
+    </Feature>    
+    <UIRef Id="WixUI_Minimal"/>
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.AppSourcePath)\EULASAMPLE.RTF"/>
+  </Product>
+</Wix>
